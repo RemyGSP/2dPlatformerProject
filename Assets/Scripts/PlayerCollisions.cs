@@ -131,22 +131,6 @@ public class PlayerCollisions : MonoBehaviour
         return contact;
     }
 
-    public Vector3 CheckCollisions(Vector2 position, Vector2 size)
-    {
-        GameObject tempColliderObject = new GameObject("TempCollider");
-        tempColliderObject.transform.position = position;
-        Vector2 aux = Vector2.zero;
-        RaycastHit2D hit = Physics2D.Raycast(position, Vector2.zero);
-
-
-        if (hit.collider != null)
-        {
-            if (GetComponent<Collider2D>().gameObject.tag == "Ground")
-            aux = GetComponent<Collider2D>().transform.position;
-        }
-        Destroy(tempColliderObject);
-        return aux;
-    }
 
     private void OnDrawGizmos()
     {

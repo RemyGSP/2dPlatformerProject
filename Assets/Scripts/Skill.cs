@@ -44,10 +44,11 @@ public class Skill : MonoBehaviour
     BoxCollider2D boxCollider;
     private bool throwActionInitiated;
     private float playerHeight;
+    private float playerWidth;
     private bool canChangeDirection;
     [SerializeField] private float cooldownDuration;
     [SerializeField] private float inputGraceTimerLimit;
-
+    [SerializeField] private LayerMask groundLayer;
     private Rigidbody2D rb2D;
     //Referencias a otros scripts
     private PlayerSounds sounds;
@@ -61,6 +62,7 @@ public class Skill : MonoBehaviour
         canChangeDirection = true;
         boxCollider = GetComponent<BoxCollider2D>();
         playerHeight = boxCollider.size.y;
+        playerWidth = boxCollider.size.x;
         sounds = GetComponent<PlayerSounds>();
         playerCollisions = GetComponent<PlayerCollisions>();
         inputGraceTimer = 0;
@@ -100,11 +102,12 @@ public class Skill : MonoBehaviour
         }
         if (inputCollector.IsThrowing() && currentThrowable != null && tpTimer > tpCooldown)
         {
-            TeleportToThrowable();
             GameObject a = Instantiate(tpParticles);
             a.transform.position = this.transform.position;
             GameObject b = Instantiate(tpParticles);
             b.transform.position = currentThrowable.transform.position;
+            TeleportToThrowable();
+
             rb2D.gravityScale = 2;
             tpTimer = 0;
             throwTimer = 0;
@@ -141,31 +144,52 @@ public class Skill : MonoBehaviour
     //Esto te teletransporta hacia el objeto
     private void TeleportToThrowable()
     {
-        
-
-        //Primero mira si existe el objeto
-        //if (currentThrowable != null)
-        //{
-        //    this.transform.position = currentThrowable.transform.position - playerCollisions.CheckCollisions(currentThrowable.transform.position, boxCollider.size);
-        //    Destroy(currentThrowable);
-
-        //}
-
-
-        // Calculate the teleport destination point
         Vector2 teleportDestination = currentThrowable.transform.position;
-        RaycastHit2D hit;
-        if (Physics2D.Raycast(new Vector2(0, playerHeight),Vector2.up,playerHeight/2).collider != null && Physics2D.Raycast(new Vector2(0, -playerHeight), Vector2.up,-playerHeight/2).collider == null)
-        {
-            teleportDestination -= new Vector2(0, playerHeight);
-        }
-        Debug.Log(Physics2D.Raycast(new Vector2(0, playerHeight), Vector2.up, playerHeight / 2).collider.gameObject);
 
+        Vector2 offset = CheckTeleportCollisions();
 
         // Teleport to the adjusted destination
-        transform.position = teleportDestination;
+        transform.position = teleportDestination + offset;
         Destroy(currentThrowable);
     }
+
+    private Vector2 CheckTeleportCollisions()
+    {
+        Vector2 aux = Vector2.zero;
+        Vector2 adjustedOffset = Vector2.zero;
+
+        RaycastHit2D hitUp = Physics2D.Raycast(transform.position, Vector2.up, playerHeight / 2, groundLayer);
+        RaycastHit2D hitLeft = Physics2D.Raycast(transform.position, Vector2.left, playerWidth / 2, groundLayer);
+        RaycastHit2D hitRight = Physics2D.Raycast(transform.position, Vector2.right, playerWidth / 2, groundLayer);
+        RaycastHit2D hitDown = Physics2D.Raycast(transform.position, Vector2.down, playerHeight / 2, groundLayer);
+
+        adjustedOffset += ProcessCollision(hitUp);
+        adjustedOffset += ProcessCollision(hitLeft);
+        adjustedOffset += ProcessCollision(hitRight);
+        adjustedOffset += ProcessCollision(hitDown);
+
+        return adjustedOffset;
+    }
+
+    private Vector2 ProcessCollision(RaycastHit2D hit)
+    {
+        Vector2 offset = Vector2.zero;
+
+        if (hit.collider != null)
+        {
+            offset = Vector2.Dot(new Vector2(transform.position.x,transform.position.y) - hit.point, hit.normal);
+
+            // Adjust the offset based on the player's movement speed
+            float speed = GetComponent<Rigidbody2D>().velocity.magnitude;
+            offset *= speed * Time.deltaTime;
+        }
+
+        return offset;
+    }
+
+
+
+
 
 
     public void DestroyThrowable()
