@@ -46,6 +46,8 @@ public class Movement : MonoBehaviour
     [SerializeField] private Vector2 jumpDirection;
     [SerializeField] private float jumpForce;
     [SerializeField] private float speed;
+    [SerializeField] GameObject visuals;
+
 
     //Esto se podria quitar pero habria que encontrar otra forma de utilizar los raycast hacia al lado para entonces poder cambiar el metodo de flipear el script del personaje por otro metodo que cambie la escala de 1 a -1
     //Esto acarreara otros problemas como por ejemplo otro cambio que se tendria que hacer en el walljump para que vaya en la direccion que quieras
@@ -53,10 +55,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private GameObject throwingPos;
     private void Awake()
     {
-        animator = GetComponent<Animator>();
+        animator = visuals.GetComponent<Animator>();
         sounds = GetComponent<PlayerSounds>();
         collisions = GetComponent<PlayerCollisions>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer = visuals.GetComponent<SpriteRenderer>();
         inputCollector = GetComponent<InputCollector>();
         playerCollisions = GetComponent<PlayerCollisions>();
         rb2D = GetComponent<Rigidbody2D>();

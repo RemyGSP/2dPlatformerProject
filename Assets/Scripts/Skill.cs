@@ -150,6 +150,8 @@ public class Skill : MonoBehaviour
         Vector2 offset = CheckTeleportCollisions();
 
         transform.position = teleportDestination + offset;
+
+
         Destroy(currentThrowable);
     }
 
@@ -194,6 +196,7 @@ public class Skill : MonoBehaviour
 
     public void DestroyThrowable()
     {
+        if (currentThrowable != null)
         Destroy(currentThrowable);
 
     }

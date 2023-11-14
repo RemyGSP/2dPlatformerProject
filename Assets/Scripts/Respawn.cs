@@ -25,7 +25,7 @@ public class Respawn : MonoBehaviour
                     minDist = dist;
                 }
             }
-            player.transform.position = tMin.position;
+            player.transform.position = new Vector3(tMin.position.x,tMin.position.y,0);
 
             //Esto es para poder borrar el beacon en el caso de que haya uno cuando mueras
             onRespawn.Invoke();
