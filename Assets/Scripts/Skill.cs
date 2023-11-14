@@ -144,18 +144,17 @@ public class Skill : MonoBehaviour
     //Esto te teletransporta hacia el objeto
     private void TeleportToThrowable()
     {
-        Vector2 teleportDestination = currentThrowable.transform.position;
+        Vector2 throwablePivot = currentThrowable.GetComponent<SpriteRenderer>().sprite.pivot / currentThrowable.GetComponent<SpriteRenderer>().sprite.pixelsPerUnit;
+        Vector2 teleportDestination = currentThrowable.transform.position - new Vector3(throwablePivot.x,throwablePivot.y,0);
 
         Vector2 offset = CheckTeleportCollisions();
 
-        // Teleport to the adjusted destination
         transform.position = teleportDestination + offset;
         Destroy(currentThrowable);
     }
 
     private Vector2 CheckTeleportCollisions()
     {
-        Vector2 aux = Vector2.zero;
         Vector2 adjustedOffset = Vector2.zero;
 
         RaycastHit2D hitUp = Physics2D.Raycast(transform.position, Vector2.up, playerHeight / 2, groundLayer);
@@ -177,7 +176,8 @@ public class Skill : MonoBehaviour
 
         if (hit.collider != null)
         {
-            offset = Vector2.Dot(new Vector2(transform.position.x,transform.position.y) - hit.point, hit.normal);
+            // Calculate the offset based on the hit.normal
+            offset = hit.normal * Mathf.Abs(hit.distance);
 
             // Adjust the offset based on the player's movement speed
             float speed = GetComponent<Rigidbody2D>().velocity.magnitude;
