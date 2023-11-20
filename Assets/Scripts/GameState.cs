@@ -6,4 +6,7 @@ public class GameState : MonoBehaviour
 {
     public static bool CanMove;
     public static bool canThrow;
+
 }
+
+

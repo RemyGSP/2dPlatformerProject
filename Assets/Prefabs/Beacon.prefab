@@ -160,7 +160,7 @@ GameObject:
   - component: {fileID: 5561319636080703213}
   m_Layer: 8
   m_Name: Beacon
-  m_TagString: Untagged
+  m_TagString: Beacon
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

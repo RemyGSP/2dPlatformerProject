@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class InputCollector : MonoBehaviour
@@ -9,6 +10,12 @@ public class InputCollector : MonoBehaviour
     [SerializeField] InputAction submitAction;
     [SerializeField] InputAction jumpAction;
     [SerializeField] InputAction throwingAction;
+    [SerializeField] InputAction respawnAction;
+    [SerializeField] InputAction cancelTpAction;
+    [SerializeField] InputAction menuAction;
+    public UnityEvent respawn;
+    public UnityEvent cancel;
+    public UnityEvent menu;
     public static InputCollector instance;
     public bool canJump;
     public bool canThrow;
@@ -19,6 +26,8 @@ public class InputCollector : MonoBehaviour
         jumpAction.Enable();
         throwingAction.Enable();
         submitAction.Enable();
+        respawnAction.Enable();
+        cancelTpAction.Enable();
     }
     private void Awake()
     {
@@ -33,12 +42,16 @@ public class InputCollector : MonoBehaviour
         submitAction.canceled += OnSubmit;
         throwingAction.performed += OnThrow;
         throwingAction.canceled += OnThrow;
+        respawnAction.performed += OnRespawn;
+        cancelTpAction.performed += OnCancelTP;
     }
     private void OnDisable()
     {
         throwingAction.Disable();
         jumpAction.Disable();
         submitAction.Disable();
+        respawnAction.Disable(); 
+        cancelTpAction.Disable();
     }
 
 
@@ -91,14 +104,18 @@ public class InputCollector : MonoBehaviour
         else  return false; 
     }
 
+    public void OnRespawn(InputAction.CallbackContext value)
+    {
+        respawn.Invoke();
+    }
 
+    public void OnCancelTP(InputAction.CallbackContext value)
+    {
+        cancel.Invoke();
+    }
 
-
-
-
-
-
-
-
-
+    public void OnMenu(InputAction.CallbackContext value)
+    {
+        menu.Invoke();
+    }
 }

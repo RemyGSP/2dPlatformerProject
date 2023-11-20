@@ -1,0 +1,2 @@
+You see those blue glowing things, those make you and you ability bounce like craaazy.
+They sure are expensive, but they come with special configuration, some will make you bounce more than others according to the scenario needs.

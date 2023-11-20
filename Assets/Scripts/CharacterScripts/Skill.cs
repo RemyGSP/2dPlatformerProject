@@ -162,7 +162,7 @@ public class Skill : MonoBehaviour
     private void TeleportToThrowable()
     {
         Vector2 throwablePivot = currentThrowable.GetComponent<SpriteRenderer>().sprite.pivot / currentThrowable.GetComponent<SpriteRenderer>().sprite.pixelsPerUnit;
-        Vector2 teleportDestination = currentThrowable.transform.position - new Vector3(0,throwablePivot.y + 0.3f,0);
+        Vector2 teleportDestination = currentThrowable.transform.position - new Vector3(0,throwablePivot.y + 0.4f,0);
 
         Vector2 offset = CheckTeleportCollisions();
         transform.position = teleportDestination + offset;

@@ -1,0 +1,1 @@
+Oh, I forgot to say that those laser rays can do some nasty things to your wellbeing. Well nothing you couldn't figure it out with some common sense, if you have any, that is.

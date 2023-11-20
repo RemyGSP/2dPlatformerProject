@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PlayerSound : MonoBehaviour
 {
-    [SerializeField] private AudioSource audioManager;
     [SerializeField] private AudioClip jumpSound;
     [SerializeField] private AudioClip footstepSound;
     [SerializeField] private AudioClip throwSound;
     public void PlayJumpSound()
     {
-        audioManager.PlayOneShot(jumpSound);
+        AudioManager.Instance.audioSource.PlayOneShot(jumpSound);
     }
     //public void PlayFootstepSound()
     //{
@@ -21,6 +20,6 @@ public class PlayerSound : MonoBehaviour
     }
     public void PlayThrowSound()
     {
-        audioManager.PlayOneShot(throwSound);
+        AudioManager.Instance.audioSource.PlayOneShot(throwSound);
     }
 }

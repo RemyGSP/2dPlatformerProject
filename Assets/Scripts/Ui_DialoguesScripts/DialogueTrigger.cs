@@ -26,6 +26,7 @@ public class DialogueTrigger : MonoBehaviour
             if (isPlayerInRange)
             {
                 DialogueManager.GetInstance().EnterDialogueMode(dialogue);
+                this.gameObject.SetActive(false);
             }
         }
     }
@@ -42,6 +43,7 @@ public class DialogueTrigger : MonoBehaviour
         else
         {
             DialogueManager.GetInstance().EnterDialogueMode(dialogue);
+            this.gameObject.SetActive(false);
         }
     }
 
