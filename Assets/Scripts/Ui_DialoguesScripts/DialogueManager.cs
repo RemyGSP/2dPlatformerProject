@@ -15,7 +15,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI dialogueText;
     private Story currentStory;
     private bool dialogueIsPlaying;
-
+    [SerializeField] GameObject player;
 
     [Header("Choices")]
     [SerializeField] private GameObject[] choices;
@@ -40,7 +40,7 @@ public class DialogueManager : MonoBehaviour
 
         if (InputCollector.instance.canSubmit)
         {
-            if (currentStory.currentChoices.Count <= 1)
+            if (currentStory.currentChoices.Count <= 0)
             ContinueDialogue();
             InputCollector.instance.canSubmit = false;
         }
@@ -88,6 +88,7 @@ public class DialogueManager : MonoBehaviour
     {
         GameState.CanMove = false;
         GameState.canThrow = false;
+        player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         currentStory = new Story(inkJSON.text);
         dialogueIsPlaying = true;
         dialoguePanel.SetActive(true);

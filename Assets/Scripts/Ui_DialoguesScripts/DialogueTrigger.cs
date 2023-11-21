@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using Ink.Runtime;
+using UnityEngine.Events;
 
 public class DialogueTrigger : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public class DialogueTrigger : MonoBehaviour
     [SerializeField] private GameObject visualFeedback;
     private bool isPlayerInRange;
     [SerializeField]private bool nonInteractableDialogue;
-
+    public UnityEvent onDialogue;
     
     [SerializeField] private TextAsset dialogue;
     private void Awake()
@@ -26,6 +27,7 @@ public class DialogueTrigger : MonoBehaviour
             if (isPlayerInRange)
             {
                 DialogueManager.GetInstance().EnterDialogueMode(dialogue);
+                onDialogue.Invoke();
                 this.gameObject.SetActive(false);
             }
         }
@@ -43,6 +45,7 @@ public class DialogueTrigger : MonoBehaviour
         else
         {
             DialogueManager.GetInstance().EnterDialogueMode(dialogue);
+            onDialogue.Invoke();
             this.gameObject.SetActive(false);
         }
     }

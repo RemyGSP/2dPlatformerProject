@@ -8,6 +8,7 @@ public class PlayerController2 : MonoBehaviour
     private InputCollector inputCollector;
     private PlayerCollisions playerCollisions;
     private Skill skill;
+    
     void Start()
     {
         GameState.CanMove = true;
@@ -38,6 +39,7 @@ public class PlayerController2 : MonoBehaviour
             movement.CheckIfJumpEnded();
             movement.FallThrough();
         }
+
 
     }
     public void StopMoving()
