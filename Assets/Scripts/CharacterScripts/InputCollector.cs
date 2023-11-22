@@ -28,6 +28,7 @@ public class InputCollector : MonoBehaviour
         submitAction.Enable();
         respawnAction.Enable();
         cancelTpAction.Enable();
+        menuAction.Enable();
     }
     private void Awake()
     {
@@ -44,6 +45,7 @@ public class InputCollector : MonoBehaviour
         throwingAction.canceled += OnThrow;
         respawnAction.performed += OnRespawn;
         cancelTpAction.performed += OnCancelTP;
+        menuAction.performed += OnMenu;
     }
     private void OnDisable()
     {
@@ -52,6 +54,7 @@ public class InputCollector : MonoBehaviour
         submitAction.Disable();
         respawnAction.Disable(); 
         cancelTpAction.Disable();
+        menuAction.Disable();
     }
 
 
