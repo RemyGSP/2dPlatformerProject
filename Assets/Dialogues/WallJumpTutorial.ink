@@ -1,1 +1,1 @@
-Now, if you press "Space" while in a wall, you can wall jump -> END
+You can press "Space" while touching a wall to walljump #Voice

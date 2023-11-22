@@ -10,12 +10,14 @@ using UnityEngine.InputSystem;
 
 public class DialogueManager : MonoBehaviour
 {
+    private CheckDialogueMethods checkMethods;
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TextMeshProUGUI dialogueText;
     private Story currentStory;
     private bool dialogueIsPlaying;
     [SerializeField] GameObject player;
+    [SerializeField] TextMeshProUGUI characterName;
 
     [Header("Choices")]
     [SerializeField] private GameObject[] choices;
@@ -47,7 +49,7 @@ public class DialogueManager : MonoBehaviour
     }
     private void Start()
     {
-
+        checkMethods = GetComponent<CheckDialogueMethods>();
         instance = this;
         dialogueIsPlaying = false;
         dialoguePanel.SetActive(false);
@@ -64,10 +66,12 @@ public class DialogueManager : MonoBehaviour
         if (currentStory.canContinue)
         {
             dialogueText.text = currentStory.Continue();
+            characterName.text = currentStory.currentTags[0];
             DisplayChoices();
         }
         else
         {
+            checkMethods.CheckDialogueTags(currentStory);
             ExitDialogueMode();
         }
     }
@@ -98,6 +102,7 @@ public class DialogueManager : MonoBehaviour
 
     public void ExitDialogueMode()
     {
+
         GameState.canThrow = true;
         GameState.CanMove = true;
         dialogueIsPlaying = false;
@@ -125,6 +130,8 @@ public class DialogueManager : MonoBehaviour
         {
             choices[i].gameObject.SetActive(false);
         }
+        Debug.Log(choices[0]);
+
         SelectFirstChoice();
     }
     private IEnumerator SelectFirstChoice()

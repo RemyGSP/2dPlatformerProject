@@ -1,3 +1,2 @@
-And for last, if you press "K" you will throw your special ability, a baton that you can throw.
-You aim it with "WASD" after pressing "K"
-Now you can do 2 things with you ability, "C" to cancel it or "K" again to TP to it
+Press "K" to throw your ability. Your ability is a baton you can throw. #Voice
+You can aim your ability with "WASD", press "K" to tp to it or "C" to cancel it #Voice
