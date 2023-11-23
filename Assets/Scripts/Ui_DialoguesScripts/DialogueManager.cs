@@ -100,6 +100,21 @@ public class DialogueManager : MonoBehaviour
 
     }
 
+    public void EnterDialogueMode(TextAsset inkJSON, bool StopPlayer)
+    {
+        if (StopPlayer)
+        {
+            GameState.CanMove = false;
+            GameState.canThrow = false;
+        }
+            player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        currentStory = new Story(inkJSON.text);
+        dialogueIsPlaying = true;
+        dialoguePanel.SetActive(true);
+        ContinueDialogue();
+
+    }
+
     public void ExitDialogueMode()
     {
 

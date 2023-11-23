@@ -13,7 +13,7 @@ public class DialogueTrigger : MonoBehaviour
     private bool isPlayerInRange;
     [SerializeField]private bool nonInteractableDialogue;
     public UnityEvent onDialogue;
-    
+    [SerializeField] private bool stopPlayerWhenDialogue;
     [SerializeField] private TextAsset dialogue;
     private void Awake()
     {
@@ -26,7 +26,7 @@ public class DialogueTrigger : MonoBehaviour
         {
             if (isPlayerInRange)
             {
-                DialogueManager.GetInstance().EnterDialogueMode(dialogue);
+                DialogueManager.GetInstance().EnterDialogueMode(dialogue, stopPlayerWhenDialogue);
                 onDialogue.Invoke();
                 this.gameObject.SetActive(false);
             }
@@ -44,7 +44,7 @@ public class DialogueTrigger : MonoBehaviour
         }
         else
         {
-            DialogueManager.GetInstance().EnterDialogueMode(dialogue);
+            DialogueManager.GetInstance().EnterDialogueMode(dialogue, stopPlayerWhenDialogue);
             onDialogue.Invoke();
             this.gameObject.SetActive(false);
         }
