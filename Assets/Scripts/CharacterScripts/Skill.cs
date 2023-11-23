@@ -7,6 +7,8 @@ using UnityEngine.Rendering;
 
 public class Skill : MonoBehaviour
 {
+    [SerializeField] GameObject visuals;
+    private Animator anims;
     #region
     [Header("Inputs")]
     [SerializeField] private InputAction facingAt;
@@ -73,6 +75,7 @@ public class Skill : MonoBehaviour
     #endregion Variables
     private void Start()
     {
+        anims = visuals.GetComponent<Animator>();
         canChangeDirection = true;
         boxCollider = GetComponent<BoxCollider2D>();
         playerHeight = boxCollider.size.y;
@@ -107,6 +110,7 @@ public class Skill : MonoBehaviour
         //esto lo hago para que mientras se mantenga pulsado el boton se muestre la trajectoria del projectil y se aplique el slomo
         if (inputCollector.canThrow && throwTimer > throwingCooldown && currentThrowable == null)
         {
+            anims.SetInteger("startThrow", 1);
             buttonPressed = true;
             ShowTrajectory();
             facingAt.Enable();
@@ -130,6 +134,8 @@ public class Skill : MonoBehaviour
         //Esto se cumple en el momento en el que se deja de mantener el boton y lo que hace es parar el sloMo, lanzar el projectil y esconder la trajectoria
         else if (!inputCollector.canThrow && buttonPressed && currentThrowable == null)
         {
+            anims.SetInteger("startThrow", 0);
+            anims.SetTrigger("endThrow");
             ThrowObject();
             throwDirection = Vector2.zero;
             sounds.PlayThrowSound();
