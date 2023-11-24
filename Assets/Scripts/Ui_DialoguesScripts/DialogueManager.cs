@@ -43,7 +43,7 @@ public class DialogueManager : MonoBehaviour
         if (InputCollector.instance.canSubmit)
         {
             if (currentStory.currentChoices.Count <= 0)
-            ContinueDialogue();
+                ContinueDialogue();
             InputCollector.instance.canSubmit = false;
         }
     }
@@ -55,7 +55,7 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         choicesText = new TextMeshProUGUI[choices.Length];
         int index = 0;
-        foreach(GameObject choice in choices)
+        foreach (GameObject choice in choices)
         {
             choicesText[index] = choice.GetComponentInChildren<TextMeshProUGUI>();
             index++;
@@ -65,13 +65,12 @@ public class DialogueManager : MonoBehaviour
     {
         if (currentStory.canContinue)
         {
+            HandleTags(currentStory.currentTags);
             dialogueText.text = currentStory.Continue();
-            characterName.text = currentStory.currentTags[0];
             DisplayChoices();
         }
         else
         {
-            checkMethods.CheckDialogueTags(currentStory);
             ExitDialogueMode();
         }
     }
@@ -81,7 +80,10 @@ public class DialogueManager : MonoBehaviour
         if (currentStory.canContinue)
         {
             dialogueText.text = currentStory.Continue();
+            HandleTags(currentStory.currentTags);
+
             DisplayChoices();
+
         }
         else
         {
@@ -107,7 +109,7 @@ public class DialogueManager : MonoBehaviour
             GameState.CanMove = false;
             GameState.canThrow = false;
         }
-            player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+        player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         currentStory = new Story(inkJSON.text);
         dialogueIsPlaying = true;
         dialoguePanel.SetActive(true);
@@ -145,7 +147,6 @@ public class DialogueManager : MonoBehaviour
         {
             choices[i].gameObject.SetActive(false);
         }
-        Debug.Log(choices[0]);
 
         SelectFirstChoice();
     }
@@ -161,5 +162,36 @@ public class DialogueManager : MonoBehaviour
     {
         currentStory.ChooseChoiceIndex(choiceIndex);
         ContinueDialogue();
+    }
+
+    public void HandleTags(List<string> currentTags)
+    {
+        foreach (string tag in currentTags)
+        {
+            // parse the tag
+            string[] splitTag = tag.Split(':');
+            Debug.Log(splitTag[0] + " " + splitTag[1]);
+            if (splitTag.Length != 2)
+            {
+                Debug.LogError("Tag could not be appropriately parsed: " + tag);
+            }
+            else
+            {
+                string tagKey = splitTag[0].Trim();
+                string tagValue = splitTag[1].Trim();
+                if (tagKey == "Speaker")
+                {
+                    DisplaySpeakerName(tagValue);
+                }
+                else
+                    checkMethods.CheckDialogueTags(tagKey, tagValue);
+            }
+
+        }
+    }
+
+    public void DisplaySpeakerName(string name)
+    {
+        characterName.text = name;
     }
 }

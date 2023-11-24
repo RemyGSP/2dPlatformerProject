@@ -9,16 +9,16 @@ public class Movement : MonoBehaviour
 {
     #region
     //Referencias a otros Scripts
-    private InputCollector inputCollector;
     private Rigidbody2D rb2D;
     private PlayerCollisions playerCollisions;
     private SpriteRenderer spriteRenderer;
     private PlayerCollisions collisions;
     private PlayerSound sounds;
     private Animator animator;
-
+    private BoxCollider2D objectCollider;
+    private Vector3 baseColliderOffset;
     [Header("Acceleration Values")]
-    [SerializeField]float runAccelAmount; [SerializeField] float runDeccelAmount; [SerializeField] float accelInAir; [SerializeField] float deccelInAir;
+    [SerializeField] float runAccelAmount; [SerializeField] float runDeccelAmount; [SerializeField] float accelInAir; [SerializeField] float deccelInAir;
     float LastOnGroundTime;
     bool doConserveMomentum;
     //Velocidad
@@ -60,11 +60,12 @@ public class Movement : MonoBehaviour
     [SerializeField] private GameObject throwingPos;
     private void Awake()
     {
+        objectCollider = GetComponent<BoxCollider2D>();
+        baseColliderOffset = objectCollider.offset;
         animator = visuals.GetComponent<Animator>();
         sounds = GetComponent<PlayerSound>();
         collisions = GetComponent<PlayerCollisions>();
         spriteRenderer = visuals.GetComponent<SpriteRenderer>();
-        inputCollector = GetComponent<InputCollector>();
         playerCollisions = GetComponent<PlayerCollisions>();
         rb2D = GetComponent<Rigidbody2D>();
     }
@@ -75,13 +76,14 @@ public class Movement : MonoBehaviour
     //Aqui recogo el input del usuario para ver a donde se quiere mover
     public void OnMove(InputValue value)
     {
-        playerDirection = new Vector2(value.Get<Vector2>().x,0);
+        playerDirection = new Vector2(value.Get<Vector2>().x, 0);
         verticalMove = new Vector2(0, value.Get<Vector2>().y);
-        if (playerDirection.x != 0 && !inputCollector.canThrow && GameState.CanMove || playerDirection.y != 0 && !inputCollector.canThrow && GameState.CanMove) 
+        if (playerDirection.x != 0 && !InputCollector.instance.canThrow && GameState.CanMove || playerDirection.y != 0 && !InputCollector.instance.canThrow && GameState.CanMove)
         {
             animator.SetInteger("Running", 1);
         }
-        else {
+        else
+        {
             animator.SetInteger("Running", 0);
         }
     }
@@ -117,28 +119,16 @@ public class Movement : MonoBehaviour
             FlipCharacter();
 
             #endregion
-            //Aqui estoy mirando que el personaje no sobrepase el limite de velocidad, de paso tambien hago que si no esta tocando el suelo ese limite no exista, esto podria provocar algun tipo de exploit pero esta bien por ahora
-            //if (rb2D.velocity.x < maxSpeed && rb2D.velocity.x > -maxSpeed)
-            //{
-            //    //sounds.PlayFootstepSound();
-            //    //Muevo al personaje añadiendole la fuerza
-            //    rb2D.AddForce((playerDirection * speed), ForceMode2D.Force);
-            //}
-
-            //if (playerDirection == Vector2.zero)
-            //{
-            //    animator.SetInteger("Running", 0);
-            //}
         }
     }
     #endregion
 
     //Metodo para saltar
     public void Jump()
-     {
-        if (inputCollector.canJump && playerCollisions.CheckGrounded())
+    {
+        if (InputCollector.instance.canJump && playerCollisions.CheckGrounded())
         {
-            inputCollector.canJump = false;
+            InputCollector.instance.canJump = false;
             //Esto es para que si esta en un muro no haga el salto normal
             if (!canWallJump)
             {
@@ -149,10 +139,10 @@ public class Movement : MonoBehaviour
                 //Aplico la fuerza del salto
                 rb2D.AddForce((jumpDirection * jumpForce), ForceMode2D.Impulse);
             }
-            
+
 
         }
-        else if (inputCollector.canJump && !playerCollisions.CheckGrounded() && playerCollisions.CheckSides())
+        else if (InputCollector.instance.canJump && !playerCollisions.CheckGrounded() && playerCollisions.CheckSides())
             WallJump();
 
     }
@@ -161,12 +151,12 @@ public class Movement : MonoBehaviour
     public void CheckIfJumpEnded()
     {
         //Este metodo me dice si esta manteniendo el espacio o el boton de salto
-        if (!inputCollector.HoldingJump())
+        if (!InputCollector.instance.HoldingJump())
         {
             endedJumpEarly = true;
         }
         //En el caso de que no este tocando el suelo y haya dejado de pulsar el espacio hace que caiga mas rapido 
-        if (!playerCollisions.CheckGrounded()  && endedJumpEarly )
+        if (!playerCollisions.CheckGrounded() && endedJumpEarly)
         {
             rb2D.gravityScale = playerAugmentedGravity;
         }
@@ -201,20 +191,14 @@ public class Movement : MonoBehaviour
         //Primero miro si puede hacer el salto
         if (canWallJump)
         {
-            //Reproduzco el sonido del salto y cambio la gravedad a 1 para que tengas mas tiempo de reaccion, ahora que lo pienso quiza se pueda quitar eso
             sounds.PlayJumpSound();
             rb2D.gravityScale = 1f;
-            //Ahora desactivo el canWallJump para que no haga nada raro como dos saltos en dos frames seguidos en consecucion
             canWallJump = false;
-            //Ahora hago el salto y le quito el movimiento al jugador durante un breve periodo de tiempo, el jugador ni lo nota
             stopMoving = true;
 
-            //Ahora utilizo unos metodos en la clase de colisiones que miran que lado esta tocando exactamente 
             if (collisions.CheckLeftSide())
             {
-                //Esto es para hacer que la direccion x del salto siempre sea positiva porque si encunentra un muro a la izquierda quiero que vaya hacia la derecha el salto
                 wallJumpDirection.x = Mathf.Abs(wallJumpDirection.x);
-                //Aqui hago que se de la vuelta el sprite puramente estetico, muy posiblemente lo pueda sustituir por una animacion de wallJump
                 if (lookingDirection == -1)
                 {
                     FlipCharacterRegardlessOfDirection();
@@ -234,7 +218,7 @@ public class Movement : MonoBehaviour
             }
 
             //Aqui reseteo la velocidad vertical para luego hacer el salto
-            rb2D.velocity = new Vector2(0f, 0f); 
+            rb2D.velocity = new Vector2(0f, 0f);
             //Hago el salto
             rb2D.AddForce(wallJumpDirection * wallJumpForce, ForceMode2D.Impulse);
             //Le devuelvo el movimiento del personaje al jugador
@@ -245,20 +229,31 @@ public class Movement : MonoBehaviour
     //Gira el sprite de el personaje y me cambia la variable looking direction para que me diga hacia que lado mira
     private void FlipCharacter()
     {
-        if (playerDirection.x > 0) { spriteRenderer.flipX = false; lookingDirection = 1; throwingPos.transform.localPosition = new Vector2(Mathf.Abs(throwingPos.transform.localPosition.x), throwingPos.transform.localPosition.y); ; }
-        else if (playerDirection.x < 0) 
-        { 
-            spriteRenderer.flipX = true; 
-            lookingDirection = -1; 
-            throwingPos.transform.localPosition = new Vector2( throwingPos.transform.localPosition.x < 0 ? throwingPos.transform.localPosition.x : -throwingPos.transform.localPosition.x, throwingPos.transform.localPosition.y); }
+        if (playerDirection.x > 0) 
+        { spriteRenderer.flipX = false; 
+            lookingDirection = 1; 
+            throwingPos.transform.localPosition = new Vector2(Mathf.Abs(throwingPos.transform.localPosition.x), throwingPos.transform.localPosition.y);
+            objectCollider.offset = new Vector2(baseColliderOffset.x, baseColliderOffset.y);
+
+        }
+        else if (playerDirection.x < 0)
+        {
+            spriteRenderer.flipX = true;
+            lookingDirection = -1;
+            throwingPos.transform.localPosition = new Vector2(throwingPos.transform.localPosition.x < 0 ? throwingPos.transform.localPosition.x : -throwingPos.transform.localPosition.x, throwingPos.transform.localPosition.y);
+            objectCollider.offset = new Vector2(-baseColliderOffset.x, baseColliderOffset.y);
+
+        }
 
     }
 
     //Esto quiza se podria sustituir por otro FlipCharacter con otros parametros
     private void FlipCharacterRegardlessOfDirection()
     {
-        if (spriteRenderer.flipX) { spriteRenderer.flipX = false; lookingDirection = 1; }
-        else { spriteRenderer.flipX = true; lookingDirection = -1; }
+        if (spriteRenderer.flipX) { spriteRenderer.flipX = false; lookingDirection = 1; objectCollider.offset = new Vector2(baseColliderOffset.x, baseColliderOffset.y);
+        }
+        else { spriteRenderer.flipX = true; lookingDirection = -1; objectCollider.offset = new Vector2(-baseColliderOffset.x, baseColliderOffset.y);
+        }
 
     }
 
@@ -300,7 +295,7 @@ public class Movement : MonoBehaviour
     {
         if (playerCollisions.CheckIfTraspassable() && verticalMove.y < -0.2f)
         {
-            playerCollisions.DeactivateCollider(playerCollisions.GetGroundCollider(),true);
+            playerCollisions.DeactivateCollider(playerCollisions.GetGroundCollider(), true);
         }
     }
 

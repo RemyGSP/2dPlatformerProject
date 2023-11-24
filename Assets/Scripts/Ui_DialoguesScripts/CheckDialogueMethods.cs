@@ -3,16 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using Ink.Runtime;
 using UnityEngine.Events;
+using UnityEngine.UIElements;
 
 public class CheckDialogueMethods : MonoBehaviour
 {
     Story story;
     public UnityEvent end;
-    public void CheckDialogueTags(Story currentStory)
+    public UnityEvent tutorial;
+    public void CheckDialogueTags(string key, string value)
     {
-        if (currentStory.currentTags[0] == "End")
+        Debug.Log(key + " " + value);
+        if (key  == "Method" && value == "End")
         {
             end.Invoke();
+        }
+        if (key == "method" && value == "Tutorial")
+        {
+            tutorial.Invoke();
         }
     }
 }

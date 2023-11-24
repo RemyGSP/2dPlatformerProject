@@ -68,7 +68,6 @@ public class Skill : MonoBehaviour
     private PlayerSound sounds;
     private PlayerController2 playerController;
     private PlayerCollisions playerCollisions;
-    private InputCollector inputCollector;
     public GameObject currentThrowable;
     private Movement movement;
 
@@ -88,7 +87,6 @@ public class Skill : MonoBehaviour
         movement = GetComponent<Movement>();
         playerController = GetComponent<PlayerController2>();
         rb2D = GetComponent<Rigidbody2D>();
-        inputCollector = GetComponent<InputCollector>();
         /*lo establezco en null porque tengo un if que comprueba que el currentThrowable sea null, se podria 
          * cambiar, si se quita se rompe el sistema de lanzamiento y tp*/
         currentThrowable = null;
@@ -108,7 +106,7 @@ public class Skill : MonoBehaviour
         if (throwDirection.x == 0 && throwDirection.y == 0) throwDirection = new Vector2(movement.playerDirection.x , movement.verticalMove.y);
         //Esto comprueba si se esta manteniendo el boton pulsado, si el cooldown esta cumplido y si no hay ningun objeto ya generado
         //esto lo hago para que mientras se mantenga pulsado el boton se muestre la trajectoria del projectil y se aplique el slomo
-        if (inputCollector.canThrow && throwTimer > throwingCooldown && currentThrowable == null)
+        if (InputCollector.instance.canThrow && throwTimer > throwingCooldown && currentThrowable == null)
         {
             anims.SetInteger("startThrow", 1);
             buttonPressed = true;
@@ -119,7 +117,7 @@ public class Skill : MonoBehaviour
             GameState.CanMove = false;
             SlowMo();
         }
-        if (inputCollector.canThrow && currentThrowable != null && tpTimer > tpCooldown)
+        if (InputCollector.instance.canThrow && currentThrowable != null && tpTimer > tpCooldown)
         {
             GameObject a = Instantiate(tpParticles);
             a.transform.position = this.transform.position;
@@ -132,7 +130,7 @@ public class Skill : MonoBehaviour
             throwTimer = 0;
         }
         //Esto se cumple en el momento en el que se deja de mantener el boton y lo que hace es parar el sloMo, lanzar el projectil y esconder la trajectoria
-        else if (!inputCollector.canThrow && buttonPressed && currentThrowable == null)
+        else if (!InputCollector.instance.canThrow && buttonPressed && currentThrowable == null)
         {
             anims.SetInteger("startThrow", 0);
             anims.SetTrigger("endThrow");
