@@ -6,13 +6,17 @@ public class PlayerSound : MonoBehaviour
     [SerializeField] private AudioClip jumpSound;
     [SerializeField] private AudioClip footstepSound;
     [SerializeField] private AudioClip throwSound;
+    [SerializeField] private AudioClip tpSound;
+
     public void PlayJumpSound()
     {
-        AudioManager.Instance.audioSource.PlayOneShot(jumpSound);
+        AudioManager.Instance.sfxSource.PlayOneShot(jumpSound);
     }
-    //public void PlayFootstepSound()
-    //{
-    //}
+    public void PlayFootstepSound()
+    {
+        StartCoroutine(Steps());
+        AudioManager.Instance.sfxSource.PlayOneShot(footstepSound);
+    }
     //Hacer esto para que haya un timing entre los sonidos de los pasos
     IEnumerator Steps()
     {
@@ -20,6 +24,11 @@ public class PlayerSound : MonoBehaviour
     }
     public void PlayThrowSound()
     {
-        AudioManager.Instance.audioSource.PlayOneShot(throwSound);
+        AudioManager.Instance.sfxSource.PlayOneShot(throwSound);
+    }
+
+    public void PlayTpSound()
+    {
+        AudioManager.Instance.sfxSource.PlayOneShot(tpSound);
     }
 }

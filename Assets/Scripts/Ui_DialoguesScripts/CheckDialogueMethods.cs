@@ -12,12 +12,11 @@ public class CheckDialogueMethods : MonoBehaviour
     public UnityEvent tutorial;
     public void CheckDialogueTags(string key, string value)
     {
-        Debug.Log(key + " " + value);
         if (key  == "Method" && value == "End")
         {
             end.Invoke();
         }
-        if (key == "method" && value == "Tutorial")
+        if (key == "Method" && value == "Tutorial")
         {
             tutorial.Invoke();
         }

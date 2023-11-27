@@ -10,6 +10,7 @@ public class BouncingPlatºorm : MonoBehaviour
     [SerializeField] private Vector2 maxBounceSpeed;
     [SerializeField] Vector2 bounceMultiplier;
     [SerializeField] private GameObject platformParticles;
+    [SerializeField] AudioClip platformSound;
 
     private void Start()
     {
@@ -23,7 +24,13 @@ public class BouncingPlatºorm : MonoBehaviour
         particles.transform.position = collision.GetContact(0).point;
         float xSpeed = rb.velocity.x > maxBounceSpeed.x ? maxBounceSpeed.x : rb.velocity.x;
         float ySpeed = rb.velocity.y > maxBounceSpeed.y ? maxBounceSpeed.y : rb.velocity.y;
-        rb.velocity = new Vector2(xSpeed,ySpeed) * bounceMultiplier; 
+        rb.velocity = new Vector2(xSpeed,ySpeed) * bounceMultiplier;
+        PlayPlatformSound();
+    }
+
+    public void PlayPlatformSound()
+    {
+        AudioManager.Instance.sfxSource.PlayOneShot(platformSound);
     }
 
 

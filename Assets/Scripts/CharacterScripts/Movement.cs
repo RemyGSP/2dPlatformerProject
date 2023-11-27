@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class Movement : MonoBehaviour
     private PlayerCollisions collisions;
     private PlayerSound sounds;
     private Animator animator;
+    private PlayerController2 playerController;
     private BoxCollider2D objectCollider;
     private Vector3 baseColliderOffset;
     [Header("Acceleration Values")]
@@ -69,6 +71,11 @@ public class Movement : MonoBehaviour
         playerCollisions = GetComponent<PlayerCollisions>();
         rb2D = GetComponent<Rigidbody2D>();
     }
+
+    private void Start()
+    {
+        playerController = GetComponent<PlayerController2>();
+    }
     private void Update()
     {
         LastOnGroundTime -= Time.deltaTime;
@@ -116,6 +123,10 @@ public class Movement : MonoBehaviour
 
             //Convert this to a vector and apply to rigidbody
             rb2D.AddForce(movement * Vector2.right, ForceMode2D.Force);
+            if (collisions.CheckGrounded() && playerDirection != Vector2.zero) playerController.runningParticles.SetActive(true);
+            else playerController.runningParticles.SetActive(false);
+            //if () sounds.PlayFootstepSound();
+            
             FlipCharacter();
 
             #endregion
@@ -182,13 +193,9 @@ public class Movement : MonoBehaviour
         }
     }
 
-    /*Hay que cambiar esto, hay una pequeña ventana de tiempo en la que el jugador si intenta hacer el wallJump en un muro situado a su derecha y mirando hacia la derecha y justo despues de saltar
-     * en un timing preciso pulsa en la otra direccion el salto que se hace no es el correcto, se que causa el bug, es debido a que el jugador se gira utilizando la escala, hago que la escala sea -1 o 1
-     * entonces si.
-     * */
+
     public void WallJump()
     {
-        //Primero miro si puede hacer el salto
         if (canWallJump)
         {
             sounds.PlayJumpSound();
@@ -205,60 +212,57 @@ public class Movement : MonoBehaviour
                 }
             }
 
-            //Hago lo mismo pero con el lado derecho
             else if (collisions.CheckRightSide())
             {
-                //Aqui hago que la direccion x de el wallJump siempre sea negativa dado que si el muro esta a la derecho yo quiero que vaya a la izquierda
                 wallJumpDirection.x = Mathf.Abs(wallJumpDirection.x) * -1;
-                //Aqui hago que se de la vuelta el sprite puramente estetico, muy posiblemente lo pueda sustituir por una animacion de wallJump
                 if (lookingDirection == 1)
                 {
                     FlipCharacterRegardlessOfDirection();
                 }
             }
 
-            //Aqui reseteo la velocidad vertical para luego hacer el salto
             rb2D.velocity = new Vector2(0f, 0f);
-            //Hago el salto
             rb2D.AddForce(wallJumpDirection * wallJumpForce, ForceMode2D.Impulse);
-            //Le devuelvo el movimiento del personaje al jugador
             stopMoving = false;
         }
     }
 
-    //Gira el sprite de el personaje y me cambia la variable looking direction para que me diga hacia que lado mira
     private void FlipCharacter()
     {
         if (playerDirection.x > 0) 
-        { spriteRenderer.flipX = false; 
+        {
+            spriteRenderer.transform.rotation = new Quaternion(0, 0, 0, 0);
+            playerController.runningParticles.transform.rotation = new Quaternion(0, 0, 0, 0);
             lookingDirection = 1; 
             throwingPos.transform.localPosition = new Vector2(Mathf.Abs(throwingPos.transform.localPosition.x), throwingPos.transform.localPosition.y);
-            objectCollider.offset = new Vector2(baseColliderOffset.x, baseColliderOffset.y);
 
         }
         else if (playerDirection.x < 0)
         {
-            spriteRenderer.flipX = true;
+            spriteRenderer.transform.rotation = new Quaternion(0,180,0,0);
+            playerController.runningParticles.transform.rotation = new Quaternion(0, 180, 0, 0);
             lookingDirection = -1;
             throwingPos.transform.localPosition = new Vector2(throwingPos.transform.localPosition.x < 0 ? throwingPos.transform.localPosition.x : -throwingPos.transform.localPosition.x, throwingPos.transform.localPosition.y);
-            objectCollider.offset = new Vector2(-baseColliderOffset.x, baseColliderOffset.y);
 
         }
 
     }
 
-    //Esto quiza se podria sustituir por otro FlipCharacter con otros parametros
     private void FlipCharacterRegardlessOfDirection()
     {
-        if (spriteRenderer.flipX) { spriteRenderer.flipX = false; lookingDirection = 1; objectCollider.offset = new Vector2(baseColliderOffset.x, baseColliderOffset.y);
+        if (spriteRenderer.flipX) {
+            spriteRenderer.transform.rotation = new Quaternion(0, 0, 0, 0);
+            lookingDirection = 1;
+            objectCollider.offset = new Vector2(baseColliderOffset.x, baseColliderOffset.y);
         }
-        else { spriteRenderer.flipX = true; lookingDirection = -1; objectCollider.offset = new Vector2(-baseColliderOffset.x, baseColliderOffset.y);
+        else {
+            spriteRenderer.transform.rotation = new Quaternion(0, 180, 0, 0);
+            lookingDirection = -1;
+            objectCollider.offset = new Vector2(-baseColliderOffset.x, baseColliderOffset.y);
         }
 
     }
 
-    //Esto hace que vaya mas lento como si levitara en el eje X, no funciona bien me lo he de revisar no hace lo que quiero, esto deberia hacer que se ralentizara pero luego volviera a la misma velocidad cuando acabe, no lo hace
-    //El parametro del metodo es si levita o no, true levita false deja de levitar
     public void LevitateOnXAxis(bool isLevitating)
     {
 
@@ -275,8 +279,6 @@ public class Movement : MonoBehaviour
 
     }
 
-    //Esto hace que vaya mas lento como si levitara en el eje Y, no funciona bien me lo he de revisar no hace lo que quiero, esto deberia hacer que se ralentizara pero luego volviera a la misma velocidad cuando acabe, no lo hace
-    //El parametro del metodo es si levita o no, true levita false deja de levitar
     public void LevitateOnYAxis(bool isLevitating)
     {
         if (isLevitating)
@@ -295,7 +297,9 @@ public class Movement : MonoBehaviour
     {
         if (playerCollisions.CheckIfTraspassable() && verticalMove.y < -0.2f)
         {
-            playerCollisions.DeactivateCollider(playerCollisions.GetGroundCollider(), true);
+            Collider2D groundCollider = playerCollisions.GetGroundCollider();
+            if (groundCollider.gameObject.CompareTag("TraspassablePlatform"))
+            playerCollisions.DeactivateCollider(groundCollider, true);
         }
     }
 

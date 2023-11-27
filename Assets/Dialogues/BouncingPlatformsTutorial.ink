@@ -1,2 +1,2 @@
-You see those blue glowing things, those make you and you ability bounce. #Voice
-They sure are expensive, but they come with special configuration, some will make you bounce more than others according to the scenario needs. #Voice
+You see those blue glowing things, those make you and your abilities bounce. #Speaker:Voice
+ And a friendly reminder, remember you can throw your ability while jumping#Speaker:Voice

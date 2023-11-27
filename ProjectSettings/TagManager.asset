@@ -24,7 +24,7 @@ TagManager:
   - Obstacles
   - DialogueTriggers
   - Interactable
-  - 
+  - Spawner
   - 
   - 
   - 
@@ -46,4 +46,7 @@ TagManager:
     locked: 0
   - name: Tilemap
     uniqueID: 1367842347
+    locked: 0
+  - name: Particles
+    uniqueID: 3641594151
     locked: 0

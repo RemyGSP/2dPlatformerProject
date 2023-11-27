@@ -1,1 +1,1 @@
-You can press "Space" while touching a wall to walljump #Voice
+You can press "Space" while touching a wall to walljump #Speaker:Voice

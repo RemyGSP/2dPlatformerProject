@@ -9,6 +9,7 @@ public class Respawn : MonoBehaviour
     [SerializeField] private GameObject firstSpawn;
     [SerializeField] private GameObject player;
     [SerializeField] private GameObject deathEffects;
+    [SerializeField] private GameObject cameraManager;
     private GameObject currentSpawn;
     public UnityEvent onRespawn;
 
@@ -22,21 +23,7 @@ public class Respawn : MonoBehaviour
             GameObject a = Instantiate(deathEffects);
             a.transform.position = player.transform.position;
             player.transform.position = currentSpawn.transform.position;
-
-            //Transform tMin = null;
-            //float minDist = Mathf.Infinity;
-            //Vector3 currentPos = player.transform.position;
-            //foreach (Transform t in respawnPoints)
-            //{
-            //    float dist = Vector3.Distance(t.position, currentPos);
-            //    if (dist < minDist)
-            //    {
-            //        tMin = t;
-            //        minDist = dist;
-            //    }
-            //}
-
-            //Esto es para poder borrar el beacon en el caso de que haya uno cuando mueras
+            ChangeCameraToRespawnCamera();
             onRespawn.Invoke();
         }
     }
@@ -44,5 +31,10 @@ public class Respawn : MonoBehaviour
     public void ChangeRespawn(GameObject newRespawn)
     {
         currentSpawn = newRespawn;
+    }
+
+    public void ChangeCameraToRespawnCamera()
+    {
+        cameraManager.GetComponent<ChangeCamera>().OnCameraChange(currentSpawn.GetComponent<ChangeRespawnPoint>().respawnPointCamera);
     }
 }

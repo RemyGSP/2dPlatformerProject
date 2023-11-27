@@ -8,6 +8,7 @@ public class PlayerController2 : MonoBehaviour
     private InputCollector inputCollector;
     private PlayerCollisions playerCollisions;
     private Skill skill;
+    public GameObject runningParticles;
     
     void Start()
     {

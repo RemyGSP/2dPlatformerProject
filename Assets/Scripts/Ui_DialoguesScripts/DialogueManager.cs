@@ -7,9 +7,14 @@ using Ink.Runtime;
 using UnityEngine.EventSystems;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
+    [SerializeField] private Image characterPortraitDisplay;
+    //0 index is player, 1 index is voice
+    [SerializeField] private Sprite[] characterPortraits;
+    
     private CheckDialogueMethods checkMethods;
     [Header("Dialogue UI")]
     [SerializeField] private GameObject dialoguePanel;
@@ -65,8 +70,9 @@ public class DialogueManager : MonoBehaviour
     {
         if (currentStory.canContinue)
         {
-            HandleTags(currentStory.currentTags);
             dialogueText.text = currentStory.Continue();
+            HandleTags(currentStory.currentTags);
+
             DisplayChoices();
         }
         else
@@ -81,7 +87,6 @@ public class DialogueManager : MonoBehaviour
         {
             dialogueText.text = currentStory.Continue();
             HandleTags(currentStory.currentTags);
-
             DisplayChoices();
 
         }
@@ -90,17 +95,7 @@ public class DialogueManager : MonoBehaviour
             ExitDialogueMode();
         }
     }
-    public void EnterDialogueMode(TextAsset inkJSON)
-    {
-        GameState.CanMove = false;
-        GameState.canThrow = false;
-        player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        currentStory = new Story(inkJSON.text);
-        dialogueIsPlaying = true;
-        dialoguePanel.SetActive(true);
-        ContinueDialogue();
-
-    }
+ 
 
     public void EnterDialogueMode(TextAsset inkJSON, bool StopPlayer)
     {
@@ -108,8 +103,9 @@ public class DialogueManager : MonoBehaviour
         {
             GameState.CanMove = false;
             GameState.canThrow = false;
+            player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+
         }
-        player.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         currentStory = new Story(inkJSON.text);
         dialogueIsPlaying = true;
         dialoguePanel.SetActive(true);
@@ -148,7 +144,7 @@ public class DialogueManager : MonoBehaviour
             choices[i].gameObject.SetActive(false);
         }
 
-        SelectFirstChoice();
+        StartCoroutine(SelectFirstChoice());
     }
     private IEnumerator SelectFirstChoice()
     {
@@ -170,7 +166,6 @@ public class DialogueManager : MonoBehaviour
         {
             // parse the tag
             string[] splitTag = tag.Split(':');
-            Debug.Log(splitTag[0] + " " + splitTag[1]);
             if (splitTag.Length != 2)
             {
                 Debug.LogError("Tag could not be appropriately parsed: " + tag);
@@ -193,5 +188,20 @@ public class DialogueManager : MonoBehaviour
     public void DisplaySpeakerName(string name)
     {
         characterName.text = name;
+        DisplayCharactePortrait(name);
+    }
+
+    //Se tendria que cambiar este sistema de portraits si el juego tiene npcs, pero como el mio no tiene tiene que ser asi
+    public void DisplayCharactePortrait(string speakerName)
+    {
+        if (speakerName == "Player")
+            characterPortraitDisplay.sprite = characterPortraits[0];
+
+        else if (speakerName == "Voice")
+            characterPortraitDisplay.sprite = characterPortraits[1];
+
+
+        
+
     }
 }

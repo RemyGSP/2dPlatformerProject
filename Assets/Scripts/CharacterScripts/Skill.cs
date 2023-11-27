@@ -123,8 +123,8 @@ public class Skill : MonoBehaviour
             a.transform.position = this.transform.position;
             GameObject b = Instantiate(tpParticles);
             b.transform.position = currentThrowable.transform.position;
+            sounds.PlayTpSound();
             TeleportToThrowable();
-
             rb2D.gravityScale = 2;
             tpTimer = 0;
             throwTimer = 0;

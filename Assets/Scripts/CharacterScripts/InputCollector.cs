@@ -39,10 +39,10 @@ public class InputCollector : MonoBehaviour
         instance = this;
         jumpAction.performed += CanJump;
         jumpAction.canceled += CanJump;
-        submitAction.performed += OnSubmit;
-        submitAction.canceled += OnSubmit;
-        throwingAction.performed += OnThrow;
-        throwingAction.canceled += OnThrow;
+        submitAction.performed += OnSubmiting;
+        submitAction.canceled += OnSubmiting;
+        throwingAction.performed += OnThrowing;
+        throwingAction.canceled += OnThrowing;
         respawnAction.performed += OnRespawn;
         cancelTpAction.performed += OnCancelTP;
         menuAction.performed += OnMenu;
@@ -69,19 +69,19 @@ public class InputCollector : MonoBehaviour
             StartCoroutine(BufferJump());
         }
     }
-    public void OnSubmit(InputAction.CallbackContext value)
+    public void OnSubmiting(InputAction.CallbackContext value)
     {
-        if (value.performed)
+        if (value.ReadValue<float>() == 1)
         {
             canSubmit = true;
         }
-        else if (value.canceled)
+        else
         {
             canSubmit = false;
         }
     }
 
-    private void OnThrow(InputAction.CallbackContext value)
+    private void OnThrowing(InputAction.CallbackContext value)
     {
         if (value.ReadValue<float>() == 1)
         {

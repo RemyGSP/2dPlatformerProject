@@ -1,2 +1,2 @@
-You see that button on the other side of the room. If you touch it it will remove the laser ray that's blocking the exit #Voice
-It doesn't really matter if you press it yourself or with your ability, just make sure to press it before going for the exit, don't make a fool of yourself, well not like I care. #Voice
+You see that button on the other side of the room. If you touch it it will remove the laser ray that's blocking the exit #Speaker:Voice
+It doesn't really matter if you press it yourself or with your ability, just make sure to press it before going for the exit, don't make a fool of yourself, well not like I care. #Speaker:Voice

@@ -1,10 +1,5 @@
 Huh, we're back here again #Speaker:Voice
 You sure dont learn from your mistakes do you...  #Speaker:Voice
-* Where am I? ->Remember
-
-
-
-=== Remember ===
 You really don't remember anything don't ya. #Speaker:Voice
 Do I need to tell you how to use your own body? #Speaker:Voice
  * Yes (Tutorial) -> Tutorial

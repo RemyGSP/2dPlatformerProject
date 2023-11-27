@@ -102,6 +102,7 @@ MonoBehaviour:
   maxBounceSpeed: {x: 10, y: 10}
   bounceMultiplier: {x: 0, y: 0}
   platformParticles: {fileID: 4896382359947222170, guid: 2d4cdc9f28dd7584c9e15b2760cf5fd4, type: 3}
+  platformSound: {fileID: 8300000, guid: a103a8bc8516be64f9f80a693f1b84a0, type: 3}
 --- !u!61 &994465253270404754
 BoxCollider2D:
   m_ObjectHideFlags: 0

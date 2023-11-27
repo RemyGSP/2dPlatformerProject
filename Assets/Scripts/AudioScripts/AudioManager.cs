@@ -6,17 +6,16 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
     public AudioSource audioSource;
+    public AudioSource sfxSource;
     [SerializeField] private AudioMixerGroup musicMixerGroup;
     [SerializeField] private AudioMixerGroup soundEffectsMixerGroup;
     [SerializeField] private Sound[] sounds;
 
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
     }
     private void Awake()
     {
-        DontDestroyOnLoad(this);
         Instance = this;
 
         foreach (Sound s in sounds)
