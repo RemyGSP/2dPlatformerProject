@@ -140,16 +140,16 @@ public class Movement : MonoBehaviour
         if (InputCollector.instance.canJump && playerCollisions.CheckGrounded())
         {
             InputCollector.instance.canJump = false;
-            //Esto es para que si esta en un muro no haga el salto normal
             if (!canWallJump)
             {
-                //Primero reproduzo el sonido del salto
                 sounds.PlayJumpSound();
                 //Pongo endedJumpEarly en false, esto cambiara a true cuando el jugador deje de mantener el espacio
                 endedJumpEarly = false;
-                //Aplico la fuerza del salto
+                animator.SetTrigger("onJump");
                 rb2D.AddForce((jumpDirection * jumpForce), ForceMode2D.Impulse);
             }
+            
+
 
 
         }

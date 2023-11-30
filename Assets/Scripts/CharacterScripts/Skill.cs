@@ -7,11 +7,11 @@ using UnityEngine.Rendering;
 
 public class Skill : MonoBehaviour
 {
+    #region Variables
     [SerializeField] GameObject visuals;
     private Animator anims;
-    #region
     [Header("Inputs")]
-    [SerializeField] private InputAction facingAt;
+    [SerializeField] private InputAction cursorDirection;
     //La fuerza con la que se tira el projectil
     [Header("Throw values")]
     [SerializeField] private Vector2 throwDirection;
@@ -83,7 +83,6 @@ public class Skill : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         playerCollisions = GetComponent<PlayerCollisions>();
         inputGraceTimer = 0;
-        facingAt.performed += OnFacingAt;
         movement = GetComponent<Movement>();
         playerController = GetComponent<PlayerController2>();
         rb2D = GetComponent<Rigidbody2D>();
@@ -96,10 +95,10 @@ public class Skill : MonoBehaviour
         throwTimer = throwingCooldown;
     }
 
-    private void LateUpdate()
-    {
-        throwDirection = inputDirection;
-    }
+    //private void LateUpdate()
+    //{
+    //    throwDirection = inputDirection;
+    //}
     //Esta variable es llamada en el update del PlayerController y basicamente hace las comprobaciones para utilizar la habilidad
     public void UseSkill()
     {
@@ -111,7 +110,7 @@ public class Skill : MonoBehaviour
             anims.SetInteger("startThrow", 1);
             buttonPressed = true;
             ShowTrajectory();
-            facingAt.Enable();
+            cursorDirection.Enable();
             movement.LevitateOnXAxis(true);
             movement.LevitateOnYAxis(true);
             GameState.CanMove = false;
@@ -142,7 +141,7 @@ public class Skill : MonoBehaviour
             GameState.CanMove = true;
             StopSloMo();
             HideTrajectory();
-            facingAt.Disable();
+            cursorDirection.Disable();
             buttonPressed = false;
         }
         //Aqui voy a�adiendo a los timers para poder utilizar correctamente los cooldowns
@@ -277,22 +276,10 @@ public class Skill : MonoBehaviour
         rb2D.gravityScale = preSloMoGravity;
     }
 
-    private void OnFacingAt(InputAction.CallbackContext value)
+    private void OnCursor(InputValue value)
     {
-        Vector2 previousValue = throwDirection;
-        if (value.ReadValue<Vector2>() == Vector2.zero)
-        {
-            inputDirection = previousValue;
-        }
-        else
-        {
-            inputDirection = value.ReadValue<Vector2>();
-        }
-        if (inputGraceTimer > inputGraceTimerLimit)
-        {
-            inputDirection = defaultThrow * movement.lookingDirection;
-        }
-
+        throwDirection = (Camera.main.ScreenToWorldPoint(value.Get<Vector2>()) - this.transform.position) *1.5f;
+        throwDirection.Normalize();
     }
 
 

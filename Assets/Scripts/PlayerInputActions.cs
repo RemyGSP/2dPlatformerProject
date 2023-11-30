@@ -80,6 +80,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cursor"",
+                    ""type"": ""Value"",
+                    ""id"": ""d64478bb-a34f-452c-90a0-e91ca24cb902"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -284,7 +293,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""4c7ef5e8-7ad8-41d6-a724-df30af0de1b3"",
-                    ""path"": ""<Keyboard>/k"",
+                    ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -300,6 +309,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Throw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""29a74fd0-b8cc-465b-ade1-14efaf038327"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cursor"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -893,6 +913,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_NextDialogue = m_Player.FindAction("NextDialogue", throwIfNotFound: true);
         m_Player_Jump = m_Player.FindAction("Jump", throwIfNotFound: true);
         m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
+        m_Player_Cursor = m_Player.FindAction("Cursor", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -972,6 +993,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_NextDialogue;
     private readonly InputAction m_Player_Jump;
     private readonly InputAction m_Player_Throw;
+    private readonly InputAction m_Player_Cursor;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -982,6 +1004,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @NextDialogue => m_Wrapper.m_Player_NextDialogue;
         public InputAction @Jump => m_Wrapper.m_Player_Jump;
         public InputAction @Throw => m_Wrapper.m_Player_Throw;
+        public InputAction @Cursor => m_Wrapper.m_Player_Cursor;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1009,6 +1032,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Throw.started += instance.OnThrow;
             @Throw.performed += instance.OnThrow;
             @Throw.canceled += instance.OnThrow;
+            @Cursor.started += instance.OnCursor;
+            @Cursor.performed += instance.OnCursor;
+            @Cursor.canceled += instance.OnCursor;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1031,6 +1057,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Throw.started -= instance.OnThrow;
             @Throw.performed -= instance.OnThrow;
             @Throw.canceled -= instance.OnThrow;
+            @Cursor.started -= instance.OnCursor;
+            @Cursor.performed -= instance.OnCursor;
+            @Cursor.canceled -= instance.OnCursor;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1219,6 +1248,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnNextDialogue(InputAction.CallbackContext context);
         void OnJump(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
+        void OnCursor(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
