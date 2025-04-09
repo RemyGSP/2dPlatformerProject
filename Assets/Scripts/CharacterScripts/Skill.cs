@@ -4,11 +4,14 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 
 public class Skill : MonoBehaviour
 {
     #region Variables
     [SerializeField] GameObject visuals;
+    [SerializeField]
+    GameObject chromaticAberration;
     private Animator anims;
     [Header("Inputs")]
     [SerializeField] private InputAction cursorDirection;
@@ -127,6 +130,8 @@ public class Skill : MonoBehaviour
             rb2D.gravityScale = 2;
             tpTimer = 0;
             throwTimer = 0;
+            chromaticAberration.SetActive(true);
+            StartCoroutine(_DeactivateChromaticAberration());
         }
         //Esto se cumple en el momento en el que se deja de mantener el boton y lo que hace es parar el sloMo, lanzar el projectil y esconder la trajectoria
         else if (!InputCollector.instance.canThrow && buttonPressed && currentThrowable == null)
@@ -143,12 +148,20 @@ public class Skill : MonoBehaviour
             HideTrajectory();
             cursorDirection.Disable();
             buttonPressed = false;
+
+
         }
         //Aqui voy a�adiendo a los timers para poder utilizar correctamente los cooldowns
         throwTimer += Time.deltaTime;
         tpTimer += Time.deltaTime;
 
 
+    }
+
+    private IEnumerator _DeactivateChromaticAberration()
+    {
+        yield return new WaitForSeconds(0.2f);
+        chromaticAberration.SetActive(false);
     }
 
     //Esto basicamente lanza el objeto, lo instancia, y le da una velocidad

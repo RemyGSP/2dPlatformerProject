@@ -35,11 +35,9 @@ public class PlayerCollisions : MonoBehaviour
     public bool CheckGrounded()
     {
         bool grounded = false;
-        leftBorder = Physics2D.Raycast(groundCheckers[0].position, Vector2.down,rayLength, ground);
-        middle = Physics2D.Raycast(groundCheckers[1].position, Vector2.down, rayLength, ground);
-        rightBorder = Physics2D.Raycast(groundCheckers[2].position, Vector2.down, rayLength, ground);
+        middle = Physics2D.Raycast(groundCheckers[0].position, Vector2.down, rayLength, ground);
 
-        if (leftBorder.collider != null || middle.collider != null || rightBorder.collider != null)
+        if (middle.collider != null )
         {
             grounded = true;
         }
@@ -49,11 +47,9 @@ public class PlayerCollisions : MonoBehaviour
     public bool CheckIfTraspassable()
     {
         bool traspassable = false;
-        leftBorder = Physics2D.Raycast(groundCheckers[0].position, Vector2.down, rayLength, ground);
-        middle = Physics2D.Raycast(groundCheckers[1].position, Vector2.down, rayLength, ground);
-        rightBorder = Physics2D.Raycast(groundCheckers[2].position, Vector2.down, rayLength, ground);
+        middle = Physics2D.Raycast(groundCheckers[0].position, Vector2.down, rayLength, ground);
 
-        if (leftBorder.collider != null && leftBorder.transform.gameObject.CompareTag("TraspassablePlatform")|| middle.collider != null && middle.transform.gameObject.CompareTag("TraspassablePlatform") || rightBorder.collider != null && rightBorder.transform.gameObject.CompareTag("TraspassablePlatform"))
+        if ( middle.collider != null && middle.transform.gameObject.CompareTag("TraspassablePlatform"))
         {
             traspassable = true;
         }

@@ -24,8 +24,8 @@ public class PlayerController2 : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (GameState.canThrow)
-        skill.UseSkill();
+        //if (GameState.canThrow)
+        //skill.UseSkill();
         movement.WallSlide();
 
 

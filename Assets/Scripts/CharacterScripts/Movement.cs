@@ -25,7 +25,7 @@ public class Movement : MonoBehaviour
     bool doConserveMomentum;
     //Velocidad
     //La direccion del input del usuario
-
+    [SerializeField] private Sprite[] jumpSprites;
     //Esto checkea que el jugador este pulsando el espacio para poder hacer el salto mas alto
     private bool endedJumpEarly = true;
     //Indica si puede hacer un wallJump o no
@@ -37,6 +37,11 @@ public class Movement : MonoBehaviour
     //Esta variable indica la direccion en la que esta mirando -1 es izquierda 1 es derecha, me hace las cosas mas faciles que sea un float y no un booleano
     public float lookingDirection;
     [Header("Movement Values")]
+    [SerializeField] private AnimationCurve jumpForceCurve;
+    [SerializeField] private float jumpTime;
+    private bool isJumping;
+    [SerializeField] private bool isFalling;
+    [SerializeField] private float jumpTimeAccelCurve;
     [SerializeField] private float maxSpeed;
     [SerializeField] private Vector2 wallJumpDirection;
     [SerializeField] private float wallJumpForce;
@@ -45,13 +50,14 @@ public class Movement : MonoBehaviour
     [SerializeField] private float speed;
     public Vector2 playerDirection;
     public Vector2 verticalMove;
-
+    [SerializeField] private GameObject wallJumpParticles;
     [Header("Player Visuals")]
     [SerializeField] GameObject trail;
     [SerializeField] private float playerDefaultGravity;
     [SerializeField] private float playerAugmentedGravity;
     //Limite de velocidad
-
+    [SerializeField] GameObject leftFoot;
+    [SerializeField] GameObject rightFoot;
 
     [SerializeField] GameObject visuals;
 
@@ -78,7 +84,21 @@ public class Movement : MonoBehaviour
     }
     private void Update()
     {
+        if (collisions.CheckGrounded())
+        {
+            animator.SetInteger("Jumping", 0);
+        }
+
+        else if (collisions.CheckGrounded())
+        {
+            animator.SetInteger("Falling", 0);
+
+        }
+
         LastOnGroundTime -= Time.deltaTime;
+        if (isJumping) {
+            Jumping();
+        }
     }
     //Aqui recogo el input del usuario para ver a donde se quiere mover
     public void OnMove(InputValue value)
@@ -99,38 +119,7 @@ public class Movement : MonoBehaviour
     //Metodo para mover el personaje, este se ejecuta desde el update del PlayerController
     public void MovePlayer()
     {
-        //Esto es para poder hacer que el personaje deje de moverse en el caso de que sea necesario
-        if (!stopMoving)
-        {
-            #region Experimental
-            float targetSpeed = playerDirection.x * maxSpeed;
-            targetSpeed = Mathf.Lerp(rb2D.velocity.x, targetSpeed, 1);
-            float accelerationRate;
 
-            if (LastOnGroundTime > 0)
-                accelerationRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccelAmount : runDeccelAmount;
-            else
-                accelerationRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccelAmount * accelInAir : runDeccelAmount * deccelInAir;
-
-            if (doConserveMomentum && Mathf.Abs(rb2D.velocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(rb2D.velocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastOnGroundTime < 0)
-            {
-                accelerationRate = 0;
-            }
-            float speedDif = targetSpeed - rb2D.velocity.x;
-            //Calculate force along x-axis to apply to thr player
-
-            float movement = speedDif * accelerationRate;
-
-            //Convert this to a vector and apply to rigidbody
-            rb2D.AddForce(movement * Vector2.right, ForceMode2D.Force);
-            if (collisions.CheckGrounded() && playerDirection != Vector2.zero) playerController.runningParticles.SetActive(true);
-            else playerController.runningParticles.SetActive(false);
-            //if () sounds.PlayFootstepSound();
-            
-            FlipCharacter();
-
-            #endregion
-        }
     }
     #endregion
 
@@ -140,21 +129,39 @@ public class Movement : MonoBehaviour
         if (InputCollector.instance.canJump && playerCollisions.CheckGrounded())
         {
             InputCollector.instance.canJump = false;
-            if (!canWallJump)
+            if (!canWallJump && !isJumping)
             {
-                sounds.PlayJumpSound();
+                rb2D.velocity = new Vector2(rb2D.velocity.x, 0);
+                isJumping = true;
                 //Pongo endedJumpEarly en false, esto cambiara a true cuando el jugador deje de mantener el espacio
-                endedJumpEarly = false;
-                animator.SetTrigger("onJump");
-                rb2D.AddForce((jumpDirection * jumpForce), ForceMode2D.Impulse);
+                //endedJumpEarly = false;
+                //animator.SetTrigger("onJump");
+                //rb2D.AddForce((jumpDirection * jumpForce), ForceMode2D.Impulse);
             }
-            
 
+ 
 
 
         }
         else if (InputCollector.instance.canJump && !playerCollisions.CheckGrounded() && playerCollisions.CheckSides())
+        {
             WallJump();
+            print("WallJump");
+        }
+
+    }
+
+    public void Jumping()
+    {
+        jumpTimeAccelCurve += Time.fixedDeltaTime;
+        rb2D.velocity += new Vector2(0,jumpForceCurve.Evaluate(jumpTimeAccelCurve) * jumpForce);
+        animator.SetInteger("Jumping",1);
+        if (jumpTimeAccelCurve >= jumpTime)
+        {
+            isJumping = false;
+            jumpTimeAccelCurve = 0;
+        }
+
 
     }
 
@@ -167,14 +174,14 @@ public class Movement : MonoBehaviour
             endedJumpEarly = true;
         }
         //En el caso de que no este tocando el suelo y haya dejado de pulsar el espacio hace que caiga mas rapido 
-        if (!playerCollisions.CheckGrounded() && endedJumpEarly)
-        {
-            rb2D.gravityScale = playerAugmentedGravity;
-        }
-        else
-        {
-            rb2D.gravityScale = playerDefaultGravity;
-        }
+        //if (!playerCollisions.CheckGrounded() && endedJumpEarly)
+        //{
+        //    rb2D.gravityScale = playerAugmentedGravity;
+        //}
+        //else
+        //{
+        //    rb2D.gravityScale = playerDefaultGravity;
+        //}
 
     }
 
@@ -185,9 +192,13 @@ public class Movement : MonoBehaviour
         {
             rb2D.drag = 0.8f;
             canWallJump = true;
+                animator.SetInteger("Sliding", 1);
+
+            
         }
         else
         {
+            animator.SetInteger("Sliding", 0);
             rb2D.drag = 0.8f;
             canWallJump = false;
         }
@@ -198,13 +209,15 @@ public class Movement : MonoBehaviour
     {
         if (canWallJump)
         {
-            sounds.PlayJumpSound();
-            rb2D.gravityScale = 1f;
+
+            animator.SetInteger("Jumping", 1);
             canWallJump = false;
             stopMoving = true;
+            
 
             if (collisions.CheckLeftSide())
             {
+                Instantiate(wallJumpParticles,leftFoot.transform);
                 wallJumpDirection.x = Mathf.Abs(wallJumpDirection.x);
                 if (lookingDirection == -1)
                 {
@@ -214,6 +227,7 @@ public class Movement : MonoBehaviour
 
             else if (collisions.CheckRightSide())
             {
+                Instantiate(wallJumpParticles,rightFoot.transform);
                 wallJumpDirection.x = Mathf.Abs(wallJumpDirection.x) * -1;
                 if (lookingDirection == 1)
                 {
@@ -221,7 +235,6 @@ public class Movement : MonoBehaviour
                 }
             }
 
-            rb2D.velocity = new Vector2(0f, 0f);
             rb2D.AddForce(wallJumpDirection * wallJumpForce, ForceMode2D.Impulse);
             stopMoving = false;
         }
@@ -229,25 +242,27 @@ public class Movement : MonoBehaviour
 
     private void FlipCharacter()
     {
-        if (playerDirection.x > 0) 
-        {
-            spriteRenderer.transform.rotation = new Quaternion(0, 0, 0, 0);
-            playerController.runningParticles.transform.rotation = new Quaternion(0, 0, 0, 0);
-            lookingDirection = 1; 
-            throwingPos.transform.localPosition = new Vector2(Mathf.Abs(throwingPos.transform.localPosition.x), throwingPos.transform.localPosition.y);
 
-        }
-        else if (playerDirection.x < 0)
-        {
-            spriteRenderer.transform.rotation = new Quaternion(0,180,0,0);
-            playerController.runningParticles.transform.rotation = new Quaternion(0, 180, 0, 0);
-            lookingDirection = -1;
-            throwingPos.transform.localPosition = new Vector2(throwingPos.transform.localPosition.x < 0 ? throwingPos.transform.localPosition.x : -throwingPos.transform.localPosition.x, throwingPos.transform.localPosition.y);
-
-        }
 
     }
 
+    public int GetAirSprite()
+    {
+
+        int airIndex = (int)Mathf.Clamp(
+            MapSprites(rb2D.velocity.y, 15f,0f,0,3),0,2
+            );
+        print("AirIndex " + airIndex);
+        return airIndex;
+    }
+
+    private float MapSprites(float currentVelocity, float maxYSpeed, float minYSpeed,int arrayMinIndex, int arrayMaxIndex)
+    {
+        int arraySize = arrayMaxIndex - arrayMinIndex;
+        float speedDifference = maxYSpeed - minYSpeed;
+        float speedSegments = speedDifference / arraySize;
+        return currentVelocity / speedSegments;
+    }
     private void FlipCharacterRegardlessOfDirection()
     {
         if (spriteRenderer.flipX) {
