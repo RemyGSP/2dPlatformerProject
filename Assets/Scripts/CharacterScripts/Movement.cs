@@ -117,9 +117,41 @@ public class Movement : MonoBehaviour
 
     #region Move
     //Metodo para mover el personaje, este se ejecuta desde el update del PlayerController
+    //Metodo para mover el personaje, este se ejecuta desde el update del PlayerController
     public void MovePlayer()
     {
+        //Esto es para poder hacer que el personaje deje de moverse en el caso de que sea necesario
+        if (!stopMoving)
+        {
+            #region Experimental
+            float targetSpeed = playerDirection.x * maxSpeed;
+            targetSpeed = Mathf.Lerp(rb2D.velocity.x, targetSpeed, 1);
+            float accelerationRate;
 
+            if (LastOnGroundTime > 0)
+                accelerationRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccelAmount : runDeccelAmount;
+            else
+                accelerationRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccelAmount * accelInAir : runDeccelAmount * deccelInAir;
+
+            if (doConserveMomentum && Mathf.Abs(rb2D.velocity.x) > Mathf.Abs(targetSpeed) && Mathf.Sign(rb2D.velocity.x) == Mathf.Sign(targetSpeed) && Mathf.Abs(targetSpeed) > 0.01f && LastOnGroundTime < 0)
+            {
+                accelerationRate = 0;
+            }
+            float speedDif = targetSpeed - rb2D.velocity.x;
+            //Calculate force along x-axis to apply to thr player
+
+            float movement = speedDif * accelerationRate;
+
+            //Convert this to a vector and apply to rigidbody
+            rb2D.AddForce(movement * Vector2.right, ForceMode2D.Force);
+            if (collisions.CheckGrounded() && playerDirection != Vector2.zero) playerController.runningParticles.SetActive(true);
+            else playerController.runningParticles.SetActive(false);
+            //if () sounds.PlayFootstepSound();
+
+            FlipCharacter();
+
+            #endregion
+        }
     }
     #endregion
 
@@ -169,10 +201,7 @@ public class Movement : MonoBehaviour
     public void CheckIfJumpEnded()
     {
         //Este metodo me dice si esta manteniendo el espacio o el boton de salto
-        if (!InputCollector.instance.HoldingJump())
-        {
-            endedJumpEarly = true;
-        }
+
         //En el caso de que no este tocando el suelo y haya dejado de pulsar el espacio hace que caiga mas rapido 
         //if (!playerCollisions.CheckGrounded() && endedJumpEarly)
         //{
@@ -239,7 +268,6 @@ public class Movement : MonoBehaviour
             stopMoving = false;
         }
     }
-
     private void FlipCharacter()
     {
 

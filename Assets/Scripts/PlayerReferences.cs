@@ -13,8 +13,15 @@ public class PlayerReferences : MonoBehaviour
     private Animator animator;
     [SerializeField]
     private PlayerCollisions playerCollisions;
+    private int playerLookingDirection;
+    [SerializeField]
+    private FlipSprite characterSpriteFlip;
+    [SerializeField]
+    SpriteRenderer characterRenderer;
+    [SerializeField]
+    private InputReceiver inputReceiver;
 
-    void Start()
+    private void Awake()
     {
         if (instance == null)
         {
@@ -25,6 +32,10 @@ public class PlayerReferences : MonoBehaviour
             Destroy(this);
             print("A playerReferences instance already exists");
         }
+    }
+    void Start()
+    {
+
     }
 
     public PlayerCollisions GetPlayerCollisions()
@@ -39,6 +50,35 @@ public class PlayerReferences : MonoBehaviour
     public Rigidbody2D GetRigidbody()
     {
         return rigidbody;
+    }
+
+    public GameObject GetVisuals()
+    {
+        return visuals;
+    }
+
+    public void SetPlayerLookingDirection(int lookingDirection)
+    {
+        playerLookingDirection = lookingDirection;
+    }
+
+    public FlipSprite GetSpriteFlipper()
+    {
+        return characterSpriteFlip;
+    }
+    public int GetPlayerLookingDirection()
+    {
+        return playerLookingDirection;
+    }
+
+    public InputReceiver GetInput()
+    {
+        return inputReceiver;
+    }
+
+    public SpriteRenderer GetSpriteRenderer()
+    {
+        return characterRenderer;
     }
     // Update is called once per frame
     void Update()

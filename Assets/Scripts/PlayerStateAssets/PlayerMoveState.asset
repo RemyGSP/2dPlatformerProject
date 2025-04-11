@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1803d8d5f01aa354c90706b71d820d0b, type: 3}
+  m_Name: PlayerMoveState
+  m_EditorClassIdentifier: 
+  stateGameObject: {fileID: 0}
+  stateTransitions:
+  - decisionToBeMade: {fileID: 11400000, guid: d84de6de964e6744bb86b7a2a429646b, type: 2}
+    onDecisionTrueExitState: {fileID: 11400000, guid: 10f0992d7ad08f84485be7370b725ac4, type: 2}
+    onDecisionFalseExitState: {fileID: 0}
+  - decisionToBeMade: {fileID: 11400000, guid: 61f6ba1d2862a3742a11b0d159c54a74, type: 2}
+    onDecisionTrueExitState: {fileID: 11400000, guid: fe631df57b3300f48bc36e5999159120, type: 2}
+    onDecisionFalseExitState: {fileID: 0}
+  maxSpeed: 15.01
+  runAccelAmount: 0.9
+  runDeccelAmount: 0.1
+  accelInAir: 0.3
+  deccelInAir: 0.3

@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d71ae4a7dab9cd14da2fff6a0166f880, type: 3}
+  m_Name: JumpState
+  m_EditorClassIdentifier: 
+  stateGameObject: {fileID: 0}
+  stateTransitions:
+  - decisionToBeMade: {fileID: 11400000, guid: 28621feaa9ef5994b915bba931af13f3, type: 2}
+    onDecisionTrueExitState: {fileID: 11400000, guid: 10f0992d7ad08f84485be7370b725ac4, type: 2}
+    onDecisionFalseExitState: {fileID: 0}
+  collisions: {fileID: 0}
+  jumpForceCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: -0.00069831964
+      value: 0.032632418
+      inSlope: 0.13641803
+      outSlope: 0.13641803
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.17560276
+      value: 0.056683064
+      inSlope: -0.09109868
+      outSlope: -0.09109868
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.39217818
+      value: -0.0018433277
+      inSlope: -0.2702356
+      outSlope: -0.2702356
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  jumpTime: 0.4
+  jumpForce: 35

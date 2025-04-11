@@ -43,10 +43,12 @@ public class CreateDecisions : EditorWindow
         using StreamWriter outfile = new StreamWriter(assetPath);
         outfile.WriteLine("using UnityEngine;");
         outfile.WriteLine("");
+        outfile.WriteLine("[CreateAssetMenu(menuName = \"PlayerDecisions/" + scriptName + "\")]\r\n");
         outfile.WriteLine("public class " + scriptName + " : Decision");
         outfile.WriteLine("{");
         outfile.WriteLine("public override bool Decide(StateMachineController stateMachine)");
         outfile.WriteLine("{");
+        outfile.WriteLine("return false;");
         outfile.WriteLine("}");
         outfile.WriteLine("}");
         AssetDatabase.Refresh();

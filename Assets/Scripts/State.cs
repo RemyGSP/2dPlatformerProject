@@ -7,6 +7,7 @@ public abstract class State: ScriptableObject
 {
     public GameObject stateGameObject;
     protected List<State> states;
+    [SerializeField]
     protected StateTransition[] stateTransitions;
 
     public virtual State CheckTransitions()

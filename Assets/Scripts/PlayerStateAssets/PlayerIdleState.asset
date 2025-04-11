@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ac6ebf57b03efb409498c4b2aaebf98, type: 3}
+  m_Name: PlayerIdleState
+  m_EditorClassIdentifier: 
+  stateGameObject: {fileID: 0}
+  stateTransitions:
+  - decisionToBeMade: {fileID: 11400000, guid: 67c956d796cf4ad4eb450fa1e8786748, type: 2}
+    onDecisionTrueExitState: {fileID: 11400000, guid: 02632286bf2bd384fb23a51872ceb038, type: 2}
+    onDecisionFalseExitState: {fileID: 0}
+  - decisionToBeMade: {fileID: 11400000, guid: 61f6ba1d2862a3742a11b0d159c54a74, type: 2}
+    onDecisionTrueExitState: {fileID: 11400000, guid: fe631df57b3300f48bc36e5999159120, type: 2}
+    onDecisionFalseExitState: {fileID: 0}

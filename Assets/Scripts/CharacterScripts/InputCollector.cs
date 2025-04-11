@@ -92,21 +92,14 @@ public class InputCollector : MonoBehaviour
             canThrow = false;
         }
     }
+
     IEnumerator BufferJump()
     {
 
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.05f);
 
         canJump = false;
     }
-    public bool HoldingJump()
-    {
-        if (jumpAction.IsPressed())
-            return true;
-        
-        else  return false; 
-    }
-
     public void OnRespawn(InputAction.CallbackContext value)
     {
         respawn.Invoke();

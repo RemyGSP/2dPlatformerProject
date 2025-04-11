@@ -9,6 +9,8 @@ public class InputReceiver : MonoBehaviour
 
     private Vector2 moveDirection;
 
+    private bool jumpPressed;
+
     private void Start()
     {
         if (instance == null)
@@ -31,4 +33,21 @@ public class InputReceiver : MonoBehaviour
         return moveDirection;
     }
 
+    public void OnJump(InputValue value)
+    {
+        jumpPressed = true;
+        StartCoroutine(BufferJump());
+    }
+    IEnumerator BufferJump()
+    {
+
+        yield return new WaitForSeconds(0.05f);
+
+        jumpPressed = false;
+    }
+
+    public bool IsPressingJump()
+    {
+        return jumpPressed;
+    }
 }

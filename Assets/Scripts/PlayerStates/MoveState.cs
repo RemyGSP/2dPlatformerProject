@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+[CreateAssetMenu(menuName = "PlayerStates/MoveState")]
 
 public class MoveState : State
 {
@@ -8,17 +9,24 @@ public class MoveState : State
     private float maxSpeed;
     [SerializeField]
     private float runAccelAmount;
+    [SerializeField]
     private float runDeccelAmount;
+    [SerializeField]
     private float accelInAir;
+    [SerializeField]
     private float deccelInAir;
     private Animator animator;
     private Rigidbody2D rigidbody;
+    private PlayerCollisions collisions;
+    private FlipSprite spriteFlipper;
     // Start is called before the first frame update
     public override void Start()
     {
+        spriteFlipper = PlayerReferences.instance.GetSpriteFlipper();
+        collisions = PlayerReferences.instance.GetPlayerCollisions();
         rigidbody = PlayerReferences.instance.GetRigidbody();
-        animator.SetInteger("Running", 1);
         animator = PlayerReferences.instance.GetAnimator();
+        animator.SetInteger("Running", 1);
     }
 
     // Update is called once per frame
@@ -36,12 +44,11 @@ public class MoveState : State
     public override void FixedUpdate()
     {
         Vector2 playerDirection = InputReceiver.instance.GetDirectionInput();
-        #region Experimental
         float targetSpeed = playerDirection.x * maxSpeed;
-        targetSpeed = Mathf.Lerp(rb2D.velocity.x, targetSpeed, 1);
+        targetSpeed = Mathf.Lerp(rigidbody.velocity.x, targetSpeed, 1);
         float accelerationRate;
 
-        if (PlayerCollisions)
+        if (collisions.CheckGrounded())
             accelerationRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccelAmount : runDeccelAmount;
         else
             accelerationRate = (Mathf.Abs(targetSpeed) > 0.01f) ? runAccelAmount * accelInAir : runDeccelAmount * deccelInAir;
@@ -51,13 +58,11 @@ public class MoveState : State
         //Calculate force along x-axis to apply to thr player
 
         float movement = speedDif * accelerationRate;
-
+        Debug.Log(movement);
         //Convert this to a vector and apply to rigidbody
-        rigidbody.velocity = (movement * Vector2.right);
-        if (collisions.CheckGrounded() && playerDirection != Vector2.zero) playerController.runningParticles.SetActive(true);
-        else playerController.runningParticles.SetActive(false);
-        //if () sounds.PlayFootstepSound();
+        rigidbody.velocity += (movement * Vector2.right);
 
-        FlipCharacter();
+
+        spriteFlipper.Flip(playerDirection);
     }
 }
